@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #0d9488;
+  --color-brand-strong: #0f766e;
+  --color-brand-deep: #134e4a;
+  --color-brand-soft: #ccfbf1;
+  --color-brand-fog: #f0fdfa;
+  --color-accent: #ea580c;
+  --color-accent-soft: #ffedd5;
+  --color-ink: #0f172a;
+  --color-ink-soft: #334155;
+  --color-muted: #64748b;
+  --color-line: #e2e8f0;
+  --color-bg: #f4f6f8;
+  --color-surface: #ffffff;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input,
+  button {
+    font-family: inherit;
+  }
+}
+
+@layer utilities {
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Leaflet z-index fix: keep map below app overlays.
+   Not: Leaflet'in iç pane sıralamasına (tile < marker) dokunulmaz;
+   marker tıklanabilirliği bozulmasın diye sadece konteyner düzeyinde
+   stacking context oluşturulur. */
+.leaflet-container {
+  z-index: 0;
+  font-family: var(--font-sans);
+}
+
+/* User location marker */
+.user-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: #2563eb;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.25);
+}
+
+/* Place markers */
+.place-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px 9999px 9999px 4px;
+  transform: rotate(-45deg);
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.3);
+  font-size: 15px;
+}
+.place-marker > span {
+  transform: rotate(45deg);
+  line-height: 1;
+}
+.place-marker.selected {
+  background: var(--color-accent) !important;
+  transform: rotate(-45deg) scale(1.2);
+}

@@ -1,0 +1,139 @@
+/**
+ * Mekân arama overlay'i.
+ * 450ms debounce + Nominatim (gerçek veri) + cache. Sonuç yoksa net
+ * mesaj; ağ hatasında düzgün durum ekranı.
+ */
+
+import { useEffect, useRef, useState } from "react";
+import { useNavigation } from "../app/navigation";
+import { useAppState } from "../app/state";
+import { searchPlaces } from "../services/osm";
+import type { Place } from "../models/types";
+import { PlaceCard } from "../components/PlaceCard";
+import { ErrorState, LoadingBlock } from "../components/states";
+import { getCategory } from "../data/categories";
+
+const SUGGESTIONS = ["Efes", "Kapadokya", "Pamukkale", "Ayasofya", "Bodrum"];
+
+export function SearchOverlay() {
+  const nav = useNavigation();
+  const { location } = useAppState();
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<Place[]>([]);
+  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
+  const [error, setError] = useState<unknown>(null);
+  const debounceRef = useRef<number | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const origin =
+    location.status === "granted" ? location.coords : undefined;
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    const q = query.trim();
+    if (q.length < 2) {
+      setResults([]);
+      setStatus("idle");
+      return;
+    }
+    if (debounceRef.current) window.clearTimeout(debounceRef.current);
+    setStatus("loading");
+    debounceRef.current = window.setTimeout(async () => {
+      try {
+        const r = await searchPlaces(q, origin);
+        setResults(r);
+        setStatus("ready");
+      } catch (err) {
+        setError(err);
+        setStatus("error");
+      }
+    }, 450);
+    return () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
+
+  return (
+    <div className="fixed inset-0 z-[1000] flex flex-col bg-bg">
+      <div className="safe-top flex items-center gap-2 border-b border-line bg-surface px-3 pb-3 pt-3">
+        <button
+          onClick={nav.back}
+          className="rounded-full p-2 text-xl active:scale-90"
+          aria-label="Geri"
+        >
+          ←
+        </button>
+        <input
+          ref={inputRef}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Yer, şehir, mekân veya kategori ara..."
+          className="flex-1 rounded-xl bg-bg px-4 py-2.5 text-sm outline-none placeholder:text-muted"
+        />
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-4 py-4">
+        {status === "idle" && (
+          <div className="space-y-4">
+            <p className="text-sm font-bold text-ink-soft">Popüler aramalar</p>
+            <div className="flex flex-wrap gap-2">
+              {SUGGESTIONS.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setQuery(s)}
+                  className="rounded-full bg-surface px-4 py-2 text-sm font-semibold text-ink-soft shadow-sm active:scale-95"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-muted">
+              Arama isim, şehir, ilçe, kategori ve konum üzerinden çalışır.
+              Örnek: "Efes", "İzmir kafe", "Kapadokya".
+            </p>
+          </div>
+        )}
+
+        {status === "loading" && <LoadingBlock label="Aranıyor..." />}
+
+        {status === "error" && <ErrorState error={error} onRetry={() => setQuery((q) => q)} />}
+
+        {status === "ready" && results.length === 0 && (
+          <div className="flex flex-col items-center gap-2 rounded-2xl bg-surface px-6 py-10 text-center">
+            <span className="text-3xl">🔍</span>
+            <p className="font-semibold text-ink">
+              Aradığın yere ait sonuç bulunamadı.
+            </p>
+            <p className="text-sm text-muted">
+              Yazımı kontrol et ya da farklı bir ifade dene.
+            </p>
+          </div>
+        )}
+
+        {status === "ready" && results.length > 0 && (
+          <div className="space-y-3">
+            {results.map((place) => (
+              <PlaceCard
+                key={place.placeId}
+                place={place}
+                onClick={() => nav.openPlace(place)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* kategori ipucu */}
+      {status === "ready" && results.length > 0 && (
+        <div className="safe-bottom border-t border-line bg-surface px-4 py-2 text-center text-[11px] text-muted">
+          Sonuçlar OpenStreetMap gerçek verisinden gelir
+          {getCategory(results[0].categoryId) && " · kategoriye göre sıralı"}
+        </div>
+      )}
+    </div>
+  );
+}
