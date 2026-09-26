@@ -180,3 +180,24 @@ export function getOfflinePlaceCount(): number {
     read<Record<string, unknown>>("ngv1:offline-places", {}),
   ).length;
 }
+
+// ------------------------------------------------------------ Hesap silme
+
+/**
+ * Uygulamanın cihaz üzerindeki TÜM verisini siler: profil, favoriler,
+ * gezi listeleri, son görüntülenenler, offline önbellek.
+ * Sunucu tabanlı hesap sistemi geldiğinde buraya sunucu hesabı silme
+ * çağrısı eklenecektir; lokal temizlik bu şekilde kalır.
+ */
+export function deleteAllLocalData() {
+  try {
+    const keys: string[] = [];
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const k = window.localStorage.key(i);
+      if (k?.startsWith("ngv1:")) keys.push(k);
+    }
+    for (const k of keys) window.localStorage.removeItem(k);
+  } catch {
+    /* localStorage erişilemiyorsa yapacak bir şey yok — sessiz geç */
+  }
+}

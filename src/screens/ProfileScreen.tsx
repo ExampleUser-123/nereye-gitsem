@@ -16,6 +16,7 @@ export function ProfileScreen() {
   const [editing, setEditing] = useState(false);
   const [nameDraft, setNameDraft] = useState(profile.name);
   const [listVersion, setListVersion] = useState(0);
+  const [deleteStep, setDeleteStep] = useState<"none" | "confirm">("none");
 
   const lists = storage.getTripLists();
   const recents = storage.getRecents();
@@ -62,6 +63,12 @@ export function ProfileScreen() {
               </button>
             )}
           </div>
+          <button
+            onClick={() => nav.openAuth()}
+            className="rounded-xl bg-brand px-3 py-2 text-xs font-bold text-white shadow-sm active:scale-95"
+          >
+            Giriş Yap / Kaydol
+          </button>
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-2 text-center">
@@ -168,7 +175,7 @@ export function ProfileScreen() {
             <SettingRow
               icon="📱"
               label="Uygulama"
-              value="NEREYE GİTSEM? v1.0"
+              value="NEREYE GİTSEM? v1.2"
             />
             <SettingRow
               icon="🗺️"
@@ -182,7 +189,55 @@ export function ProfileScreen() {
             />
           </div>
         </section>
+
+        {/* Hesap silme */}
+        <section className="rounded-2xl border border-red-200 bg-red-50 shadow-sm">
+          <h2 className="px-4 pt-3 text-sm font-bold text-red-700">Tehlikeli Bölge</h2>
+          <div className="px-4 pb-3">
+            <p className="mb-3 text-xs leading-relaxed text-red-700">
+              Hesabını silersen profil bilgilerin, tüm favorilerin, gezi listelerin, son görüntülenen mekânların ve offline rehber kayıtların bu cihazdan silinir. Bu işlem geri alınamaz.
+            </p>
+            <button
+              onClick={() => setDeleteStep("confirm")}
+              className="w-full rounded-xl bg-red-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm active:scale-[0.98]"
+            >
+              HESABIMI SİL
+            </button>
+          </div>
+        </section>
       </div>
+
+      {deleteStep === "confirm" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-sm rounded-3xl bg-surface p-5 shadow-2xl">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-2xl">⚠️</div>
+            <h3 className="mb-2 text-lg font-extrabold text-ink">Hesabını silmek istediğine emin misin?</h3>
+            <ul className="mb-5 list-disc space-y-1 pl-5 text-sm text-ink-soft">
+              <li>Profil bilgilerin silinecek</li>
+              <li>Tüm favorilerin kaldırılacak</li>
+              <li>Gezi listelerin silinecek</li>
+              <li>Son görüntülenenler ve offline kayıtlar silinecek</li>
+            </ul>
+            <div className="space-y-2">
+              <button
+                onClick={() => {
+                  storage.deleteAllLocalData();
+                  window.location.reload();
+                }}
+                className="w-full rounded-xl bg-red-600 py-3 text-sm font-bold text-white active:scale-[0.98]"
+              >
+                Evet, tüm verilerimi sil
+              </button>
+              <button
+                onClick={() => setDeleteStep("none")}
+                className="w-full rounded-xl bg-bg py-3 text-sm font-bold text-ink active:scale-[0.98]"
+              >
+                Vazgeç
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

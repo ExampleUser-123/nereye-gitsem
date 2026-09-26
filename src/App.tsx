@@ -14,6 +14,7 @@ import { SearchOverlay } from "./screens/SearchOverlay";
 import { CitySelectOverlay } from "./screens/CitySelectOverlay";
 import { PlaceDetailScreen } from "./screens/PlaceDetailScreen";
 import { TripListOverlay } from "./screens/TripListOverlay";
+import { AuthOverlay } from "./screens/AuthOverlay";
 
 function ScreenRouter() {
   const { tab, top } = useNavigation();
@@ -33,6 +34,7 @@ function ScreenRouter() {
       {top?.kind === "citySelect" && <CitySelectOverlay />}
       {top?.kind === "place" && <PlaceDetailScreen placeRef={top.ref} />}
       {top?.kind === "tripList" && <TripListOverlay listId={top.listId} />}
+      {top?.kind === "auth" && <AuthOverlay />}
     </>
   );
 }

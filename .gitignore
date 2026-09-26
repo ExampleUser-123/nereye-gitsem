@@ -10,3 +10,6 @@ ios/
 .env.*.local
 *.log
 .DS_Store
+android/keystore.properties 
+*.keystore 
+*.jks 

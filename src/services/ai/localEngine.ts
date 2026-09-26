@@ -21,7 +21,7 @@ import {
   type AIResponse,
 } from "./types";
 
-interface Intent {
+export interface Intent {
   city?: string;
   cityCoords?: { lat: number; lon: number };
   categoryIds?: string[];
@@ -52,7 +52,8 @@ const KEYWORD_MAP: Array<{
 const NEAR_WORDS = ["yakın", "yakınımda", "yakin", "etraf", "burada", "çevre", "cevre", "bana yakın"];
 const FREE_WORDS = ["ucuz", "ekonomik", "bedava", "ücretsiz", "ucretsiz", "parasız", "parasiz", "az para"];
 
-function parseIntent(query: string, ctx: AIRequest["context"]): Intent {
+/** Gemini motorunun da gerçek OSM verisi çekmesi için dışa açılmıştır. */
+export function parseIntent(query: string, ctx: AIRequest["context"]): Intent {
   const q = normalizeTr(query);
 
   const intent: Intent = { nearMe: false, freeOnly: false, wantsFood: false };

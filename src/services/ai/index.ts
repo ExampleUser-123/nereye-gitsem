@@ -9,6 +9,7 @@
 
 import type { AIProvider } from "./types";
 import { localEngine } from "./localEngine";
+import { geminiEngine } from "./geminiEngine";
 
 export type { AIProvider, AIRequest, AIResponse, AIContext } from "./types";
 export { AIUnavailableError } from "./types";
@@ -16,6 +17,9 @@ export { AIUnavailableError } from "./types";
 export function createAIProvider(): AIProvider {
   const provider = (import.meta.env.VITE_AI_PROVIDER as string) ?? "local";
   switch (provider) {
+    case "gemini":
+      // Anahtar (.env) yoksa geminiEngine kendi içinde yerel motora düşer.
+      return geminiEngine;
     case "local":
     default:
       // V1'de tek sağlayıcı yerel motordur; arayüz (AIProvider) LLM

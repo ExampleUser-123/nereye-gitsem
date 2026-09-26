@@ -24,7 +24,8 @@ export type Overlay =
   | { kind: "search" }
   | { kind: "place"; ref: PlaceRef }
   | { kind: "citySelect" }
-  | { kind: "tripList"; listId: string };
+  | { kind: "tripList"; listId: string }
+  | { kind: "auth" };
 
 interface NavState {
   tab: Tab;
@@ -34,6 +35,7 @@ interface NavState {
   openPlace: (ref: PlaceRef) => void;
   openCitySelect: () => void;
   openTripList: (listId: string) => void;
+  openAuth: () => void;
   back: () => void;
   /** En üstteki overlay (yoksa undefined). */
   top: Overlay | undefined;
@@ -89,6 +91,7 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
       openPlace: (ref) => pushWithHistory({ kind: "place", ref }),
       openCitySelect: () => pushWithHistory({ kind: "citySelect" }),
       openTripList: (listId) => pushWithHistory({ kind: "tripList", listId }),
+      openAuth: () => pushWithHistory({ kind: "auth" }),
       back,
     }),
     [tab, overlays, setTab, pushWithHistory, back],
