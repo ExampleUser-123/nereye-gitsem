@@ -24,7 +24,7 @@ import {
 } from "./types";
 
 const API_KEY = (import.meta.env.VITE_GEMINI_API_KEY as string | undefined)?.trim();
-const MODEL = "gemini-2.0-flash";
+const MODEL = "gemini-flash-latest";
 const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
 const SYSTEM_PROMPT = `Sen "NEREYE GİTSEM?" adlı Türkiye gezi uygulamasının yapay zekâ asistanısın. Kullanıcıya nereye gidebileceğini önerirsin.
