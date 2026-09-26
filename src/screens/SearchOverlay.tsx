@@ -12,12 +12,13 @@ import type { Place } from "../models/types";
 import { PlaceCard } from "../components/PlaceCard";
 import { ErrorState, LoadingBlock } from "../components/states";
 import { getCategory } from "../data/categories";
+import { CITIES, findCityByName, normalizeTr } from "../data/cities";
 
 const SUGGESTIONS = ["Efes", "Kapadokya", "Pamukkale", "Ayasofya", "Bodrum"];
 
 export function SearchOverlay() {
   const nav = useNavigation();
-  const { location } = useAppState();
+  const { location, setSelectedCity } = useAppState();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Place[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
@@ -27,6 +28,11 @@ export function SearchOverlay() {
 
   const origin =
     location.status === "granted" ? location.coords : undefined;
+
+  // Şehir tespiti: sorgu bir şehir adıyla başlıyorsa "keşfet" aksiyonu göster
+  const matchedCity = findCityByName(query.trim()) ??
+    CITIES.find((c) => normalizeTr(query).startsWith(normalizeTr(c.name)) &&
+      normalizeTr(c.name).length >= 4);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -77,6 +83,25 @@ export function SearchOverlay() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4">
+        {matchedCity && query.trim().length >= 3 && (
+          <button
+            onClick={() => {
+              setSelectedCity(matchedCity.name);
+              nav.setTab("discover");
+            }}
+            className="mb-4 flex w-full items-center gap-3 rounded-2xl bg-gradient-to-r from-brand to-brand-strong px-4 py-4 text-left text-white shadow-lg shadow-brand/20 active:scale-[0.98]"
+          >
+            <span className="text-2xl">🏙️</span>
+            <span className="flex-1">
+              <span className="block font-extrabold">{matchedCity.name} şehrini keşfet</span>
+              <span className="text-xs opacity-85">
+                Yakınındaki yerleri, kategorileri ve modları gör
+              </span>
+            </span>
+            <span>→</span>
+          </button>
+        )}
+
         {status === "idle" && (
           <div className="space-y-4">
             <p className="text-sm font-bold text-ink-soft">Popüler aramalar</p>

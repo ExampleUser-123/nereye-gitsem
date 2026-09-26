@@ -24,6 +24,12 @@ export interface AIContext {
 export interface AIRequest {
   query: string;
   context: AIContext;
+  /**
+   * Önceki konuşma turları (en yeniden en eskiye).
+   * Motor, "daha uygun olsun", "yakın olsun" gibi takip isteklerini
+   * bağlamdan çözmek için kullanır.
+   */
+  history?: Array<{ role: "user" | "assistant"; text: string }>;
 }
 
 export interface AIResponse {

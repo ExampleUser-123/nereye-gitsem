@@ -1,5 +1,6 @@
 /**
- * Gezi listesi detayı (V1 temel sürüm: listeyi gör, mekân aç, kaldır).
+ * Gezi listesi detayı.
+ * V1.1: mesafeye göre rota sıralama (en yakın ilk) + doğrudan navigasyon.
  * Gelişmiş gezi planlayıcı ileride bu ekranın üzerine inşa edilecek.
  */
 
@@ -7,16 +8,30 @@ import { useState } from "react";
 import { useNavigation } from "../app/navigation";
 import { useAppState } from "../app/state";
 import * as storage from "../services/storage";
+import { haversineMeters, formatDistance } from "../services/osm";
 import { PlaceCard } from "../components/PlaceCard";
 import { EmptyState } from "../components/states";
+import type { PlaceRef } from "../models/types";
 
 export function TripListOverlay({ listId }: { listId: string }) {
   const nav = useNavigation();
-  const { bumpRecents } = useAppState();
+  const { bumpRecents, location } = useAppState();
   const [version, setVersion] = useState(0);
+  const [sortedByDistance, setSortedByDistance] = useState(false);
 
   const list = storage.getTripLists().find((l) => l.id === listId);
-  const places = storage.getPlacesInList(listId);
+  let places = storage.getPlacesInList(listId);
+
+  const userCoords =
+    location.status === "granted" ? location.coords : undefined;
+
+  if (sortedByDistance && userCoords) {
+    places = [...places].sort(
+      (a, b) =>
+        haversineMeters(userCoords, { lat: a.latitude, lon: a.longitude }) -
+        haversineMeters(userCoords, { lat: b.latitude, lon: b.longitude }),
+    );
+  }
 
   if (!list) {
     return (
@@ -56,31 +71,76 @@ export function TripListOverlay({ listId }: { listId: string }) {
             description="Mekân detay ekranındaki ➕ butonuyla yer ekleyebilirsin."
           />
         ) : (
-          <div className="space-y-3">
-            {places.map((ref, i) => (
-              <div key={ref.placeId} className="relative">
-                <span className="absolute -left-1 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-ink text-[11px] font-black text-white">
-                  {i + 1}
-                </span>
-                <PlaceCard
-                  place={ref}
-                  onClick={() => nav.openPlace(ref)}
-                  onNavigate={() => nav.openPlace(ref)}
-                />
+          <>
+            {userCoords && (
+              <div className="mb-3 flex gap-2">
                 <button
-                  onClick={() => {
-                    storage.removePlaceFromList(listId, ref.placeId);
-                    setVersion((v) => v + 1);
-                    bumpRecents();
-                  }}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-sm"
-                  aria-label="Listeden çıkar"
+                  onClick={() => setSortedByDistance((s) => !s)}
+                  className={`flex-1 rounded-xl py-2.5 text-xs font-bold active:scale-95 ${
+                    sortedByDistance
+                      ? "bg-brand text-white"
+                      : "bg-surface text-ink-soft"
+                  }`}
                 >
-                  ✖️
+                  📍 Mesafeye göre sırala
                 </button>
+                {places.length > 0 && (
+                  <button
+                    onClick={() => nav.openPlace(places[0] as PlaceRef)}
+                    className="flex-1 rounded-xl bg-ink py-2.5 text-xs font-bold text-white active:scale-95"
+                  >
+                    🚀 Rotayı başlat ({sortedByDistance ? "en yakın" : "1."})
+                  </button>
+                )}
               </div>
-            ))}
-          </div>
+            )}
+            <div className="space-y-3">
+              {places.map((ref, i) => {
+                const dist = userCoords
+                  ? formatDistance(
+                      haversineMeters(userCoords, {
+                        lat: ref.latitude,
+                        lon: ref.longitude,
+                      }),
+                    )
+                  : null;
+                return (
+                  <div key={ref.placeId} className="relative">
+                    <span className="absolute -left-1 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-ink text-[11px] font-black text-white">
+                      {i + 1}
+                    </span>
+                    <PlaceCard
+                      place={ref}
+                      onClick={() => nav.openPlace(ref)}
+                      onNavigate={() => nav.openPlace(ref)}
+                    />
+                    {dist && (
+                      <span className="absolute right-14 top-2 rounded-full bg-brand-fog px-2 py-0.5 text-[10px] font-bold text-brand-strong">
+                        {dist}
+                      </span>
+                    )}
+                    <button
+                      onClick={() => {
+                        storage.removePlaceFromList(listId, ref.placeId);
+                        setVersion((v) => v + 1);
+                        bumpRecents();
+                      }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-sm"
+                      aria-label="Listeden çıkar"
+                    >
+                      ✖️
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+            {sortedByDistance && (
+              <p className="mt-3 text-center text-[11px] text-muted">
+                Sıralama: konumuna en yakın mekân ilk sırada · her karttan
+                "GİDERİM" ile navigasyonu başlat
+              </p>
+            )}
+          </>
         )}
       </div>
     </div>

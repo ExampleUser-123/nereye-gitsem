@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>İkon Seçimi — NEREYE GİTSEM?</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #f4f6f8; margin: 0; padding: 40px 20px; }
+  h1 { text-align: center; color: #0f172a; }
+  p.sub { text-align: center; color: #64748b; margin-bottom: 32px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; max-width: 1000px; margin: 0 auto; }
+  .card { background: #fff; border-radius: 20px; padding: 24px; text-align: center; box-shadow: 0 1px 4px rgba(15,23,42,.08); }
+  .card svg { width: 160px; height: 160px; border-radius: 36px; box-shadow: 0 8px 24px rgba(15,23,42,.15); }
+  .card h2 { margin: 16px 0 4px; color: #0f172a; }
+  .card p { color: #64748b; font-size: 13px; margin: 0; }
+  .phone { background: #0f172a; color: #fff; font-size: 12px; padding: 4px 8px; border-radius: 8px; display: inline-block; margin-top: 12px; }
+</style>
+</head>
+<body>
+<h1>Hangi ikonla çıkalım?</h1>
+<p class="sub">Beğendiğin ikonun harfini söyle (A / B / C / D). Alttaki küçük kutu, telefonda ana ekranda nasıl görüneceğini gösterir.</p>
+<div class="grid">
+
+  <!-- A — Roketli Pin -->
+  <div class="card">
+    <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="a-bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#14b8a6"/><stop offset="1" stop-color="#0f766e"/>
+        </linearGradient>
+      </defs>
+      <rect width="512" height="512" rx="112" fill="url(#a-bg)"/>
+      <path d="M256 96c-70 0-127 55-127 123 0 88 104 176 127 197 23-21 127-109 127-197 0-68-57-123-127-123z" fill="#fff"/>
+      <circle cx="256" cy="215" r="52" fill="#0d9488"/>
+      <path d="M256 176c20 0 36 16 36 36s-16 36-36 36-36-16-36-36 16-36 36-36z" fill="#134e4a"/>
+      <path d="M330 118c34 10 60 38 68 72" stroke="#f97316" stroke-width="16" stroke-linecap="round" fill="none"/>
+      <path d="M398 190l14-34 12 32z" fill="#f97316"/>
+    </svg>
+    <h2>A — Roketli Pin</h2>
+    <p>Bulumaca pin + roket izi: keşif + navigasyon fikrini tek görselde anlatır.</p>
+    <div class="phone">📱 önizleme</div>
+  </div>
+
+  <!-- B — Pusula -->
+  <div class="card">
+    <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="b-bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#115e59"/><stop offset="1" stop-color="#134e4a"/>
+        </linearGradient>
+      </defs>
+      <rect width="512" height="512" rx="112" fill="url(#b-bg)"/>
+      <circle cx="256" cy="256" r="150" fill="none" stroke="#ccfbf1" stroke-width="10" opacity=".45"/>
+      <circle cx="256" cy="256" r="150" fill="none" stroke="#ccfbf1" stroke-width="4" opacity=".25" stroke-dasharray="4 14"/>
+      <path d="M256 126l34 108-34-24-34 24z" fill="#f97316"/>
+      <path d="M256 386l-34-108 34 24 34-24z" fill="#ffffff"/>
+      <circle cx="256" cy="256" r="18" fill="#ccfbf1"/>
+    </svg>
+    <h2>B — Pusula</h2>
+    <p>Sakin, premium duruş; turuncu iğne keşif enerjisi katar.</p>
+    <div class="phone">📱 önizleme</div>
+  </div>
+
+  <!-- C — Harita + Rota -->
+  <div class="card">
+    <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="c-bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#14b8a6"/><stop offset="1" stop-color="#0d9488"/>
+        </linearGradient>
+      </defs>
+      <rect width="512" height="512" rx="112" fill="url(#c-bg)"/>
+      <path d="M118 160l92-42v234l-92 42zM210 118l92 42v234l-92-42zM302 160l92-42v234l-92 42z" fill="#ffffff" opacity=".22"/>
+      <path d="M150 340c60 10 70-90 130-80 52 8 58 62 96 58" stroke="#f97316" stroke-width="14" fill="none" stroke-linecap="round" stroke-dasharray="2 22"/>
+      <circle cx="150" cy="340" r="20" fill="#ffffff"/>
+      <path d="M376 236c-26 0-47 20-47 46 0 33 40 66 47 72 7-6 47-39 47-72 0-26-21-46-47-46z" fill="#ffffff"/>
+      <circle cx="376" cy="284" r="16" fill="#0d9488"/>
+    </svg>
+    <h2>C — Harita + Rota</h2>
+    <p>Katlı harita + kesikli rota: "nereden nereye" hikâyesi.</p>
+    <div class="phone">📱 önizleme</div>
+  </div>
+
+  <!-- D — Tarihi Silüet -->
+  <div class="card">
+    <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="d-bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#0d9488"/><stop offset="1" stop-color="#134e4a"/>
+        </linearGradient>
+      </defs>
+      <rect width="512" height="512" rx="112" fill="url(#d-bg)"/>
+      <path d="M256 92c-76 0-138 60-138 133 0 95 116 190 138 210 22-20 138-115 138-210 0-73-62-133-138-133z" fill="#ffffff"/>
+      <g fill="#0f766e">
+        <path d="M196 300c0-34 27-62 60-62s60 28 60 62v18H196z"/>
+        <rect x="188" y="318" width="136" height="12" rx="6"/>
+        <circle cx="256" cy="212" r="16"/>
+        <path d="M250 176h12v22h-12z"/>
+        <path d="M330 250c0-14 10-24 22-24s22 10 22 24v50h-44z"/>
+        <path d="M138 266c0-12 9-21 20-21s20 9 20 21v34h-40z"/>
+      </g>
+    </svg>
+    <h2>D — Tarihi Silüet</h2>
+    <p>Pin içinde kubbe + minare silüeti: Türkiye keşif kimliği.</p>
+    <div class="phone">📱 önizleme</div>
+  </div>
+
+</div>
+</body>
+</html>

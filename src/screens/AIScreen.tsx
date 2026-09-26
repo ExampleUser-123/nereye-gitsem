@@ -16,6 +16,8 @@ import { useAppState } from "../app/state";
 import { createAIProvider, AIUnavailableError } from "../services/ai";
 import type { Place } from "../models/types";
 import { PlaceCard } from "../components/PlaceCard";
+import * as storage from "../services/storage";
+import { toRef } from "../services/osm";
 
 interface ChatMessage {
   id: string;
@@ -50,6 +52,7 @@ export function AIScreen() {
   ]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
+  const [addedLists, setAddedLists] = useState<Record<string, string>>({});
   const listRef = useRef<HTMLDivElement | null>(null);
   const providerRef = useRef<ReturnType<typeof createAIProvider> | null>(null);
   if (!providerRef.current) providerRef.current = createAIProvider();
@@ -57,6 +60,13 @@ export function AIScreen() {
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
   }, [messages, busy]);
+
+  const addAllToList = (messageId: string, places: Place[]) => {
+    if (places.length === 0) return;
+    const list = storage.createTripList(`AI Önerisi · ${places[0].city ?? "Keşif"}`);
+    for (const p of places) storage.addPlaceToList(list.id, toRef(p));
+    setAddedLists((prev) => ({ ...prev, [messageId]: list.id }));
+  };
 
   const send = async (text: string) => {
     const q = text.trim();
@@ -77,6 +87,10 @@ export function AIScreen() {
             location.status === "granted" ? location.city : undefined,
           selectedCity,
         },
+        history: messages
+          .filter((m) => m.role === "user")
+          .slice(-2)
+          .map((m) => ({ role: m.role, text: m.text })),
       });
       setMessages((prev) => [
         ...prev,
@@ -130,6 +144,18 @@ export function AIScreen() {
                     onNavigate={() => nav.openPlace(p)}
                   />
                 ))}
+                {addedLists[m.id] ? (
+                  <div className="rounded-2xl bg-brand-fog px-4 py-3 text-center text-sm font-semibold text-brand-strong">
+                    ✅ Gezi listesine eklendi — Profil'den yönetebilirsin
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => addAllToList(m.id, m.places!)}
+                    className="w-full rounded-2xl border-2 border-brand bg-surface py-3 text-sm font-bold text-brand-strong active:scale-[0.98]"
+                  >
+                    📋 Önerilen {m.places.length} yeri gezi listesine ekle
+                  </button>
+                )}
                 <p className="text-[11px] text-muted">
                   Öneriler gerçek OpenStreetMap verisinden gelir · detay için karta dokun
                 </p>

@@ -151,3 +151,32 @@ export function getLastCityId(): string | undefined {
 export function setLastCityId(cityId: string) {
   write(K.city, cityId);
 }
+
+// ------------------------------------------------------------ Offline rehber
+
+/**
+ * Görüntülenen mekânların tam detayı cihaza kaydedilir; internet yokken
+ * detay ekranı bu önbellekten açılır (offline rehber temeli).
+ */
+export function saveOfflinePlace(place: unknown) {
+  try {
+    const p = place as { placeId: string };
+    if (!p?.placeId) return;
+    const all = read<Record<string, unknown>>("ngv1:offline-places", {});
+    all[p.placeId] = place;
+    write("ngv1:offline-places", all);
+  } catch {
+    /* kota dolu — sessizce geç */
+  }
+}
+
+export function getOfflinePlace(placeId: string): unknown | null {
+  const all = read<Record<string, unknown>>("ngv1:offline-places", {});
+  return all[placeId] ?? null;
+}
+
+export function getOfflinePlaceCount(): number {
+  return Object.keys(
+    read<Record<string, unknown>>("ngv1:offline-places", {}),
+  ).length;
+}

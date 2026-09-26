@@ -134,8 +134,22 @@ function buildText(
 export const localEngine: AIProvider = {
   id: "local-osm-engine",
 
-  async recommend({ query, context }: AIRequest): Promise<AIResponse> {
-    const intent = parseIntent(query, context);
+  async recommend({ query, context, history = [] }: AIRequest): Promise<AIResponse> {
+    // Çok turlu bağlam: son 2 kullanıcı mesajını birleştirerek niyet çıkar.
+    // "daha uygun olsun" gibi takip cümleleri önceki konuyu taşır.
+    const previousUserTexts = history
+      .filter((m) => m.role === "user")
+      .map((m) => m.text)
+      .slice(0, 2);
+    const combined = [...previousUserTexts, query].join(" ");
+    const intent = parseIntent(combined, context);
+
+    // Takip ince ayarları (yalnızca güncel cümleye bakılır)
+    const q = normalizeTr(query);
+    if (["daha uygun", "ucuz", "bedava", "ekonomik", "daha az"].some((w) => q.includes(w)))
+      intent.freeOnly = true;
+    if (["daha yakın", "yakın", "yakınımda"].some((w) => q.includes(w)))
+      intent.nearMe = true;
 
     const center = intent.nearMe && context.userCoords
       ? context.userCoords
@@ -175,6 +189,15 @@ export const localEngine: AIProvider = {
         return {
           engine: this.id,
           text: `${originLabel} bu konuda henüz güvenilir bir veri kaynağım yok. Başka bir kriterle dener misin?`,
+          places: [],
+        };
+      }
+      // Sunucu yoğunluğu (502/504/429) için net, uydurmasız mesaj:
+      const status = (err as { status?: number }).status;
+      if (status === 502 || status === 504 || status === 429) {
+        return {
+          engine: this.id,
+          text: "Keşif sunucuları şu anda çok yoğun. Birkaç dakika sonra aynı soruyu tekrar gönderir misin? Önbellekteki bölgeler bu sürede de çalışır.",
           places: [],
         };
       }

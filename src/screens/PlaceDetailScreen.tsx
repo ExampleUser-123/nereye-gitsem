@@ -18,6 +18,8 @@ import type { Place, PlaceRef } from "../models/types";
 import { getCategory } from "../data/categories";
 import { NavigateButton } from "../components/NavigateButton";
 import { LoadingBlock, ErrorState } from "../components/states";
+import { fetchPlacePhoto } from "../services/photos";
+import { isOpenNow } from "../utils/openingHours";
 
 export function PlaceDetailScreen({ placeRef }: { placeRef: PlaceRef }) {
   const nav = useNavigation();
@@ -28,21 +30,53 @@ export function PlaceDetailScreen({ placeRef }: { placeRef: PlaceRef }) {
   const [error, setError] = useState<unknown>(null);
   const [addedListId, setAddedListId] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const [offline, setOffline] = useState(false);
+  const [openNow, setOpenNow] = useState<boolean | null>(null);
+
+  const finishReady = (p: Place, isOffline = false) => {
+    setPlace(p);
+    setStatus("ready");
+    setOffline(isOffline);
+    setOpenNow(p.openingHours ? isOpenNow(p.openingHours) : null);
+    storage.addRecent(toRef(p));
+    if (!isOffline) storage.saveOfflinePlace(p);
+    bumpRecents();
+
+    // Foto enrichment: OSM'de foto yoksa Wikipedia/Wikidata'dan gerçek görsel
+    if (p.images.length === 0 && !isOffline) {
+      fetchPlacePhoto(p)
+        .then((photo) => {
+          if (photo) {
+            const enriched = { ...p, images: [photo] };
+            setPlace(enriched);
+            storage.saveOfflinePlace(enriched);
+          }
+        })
+        .catch(() => {
+          /* görsel opsiyonel */
+        });
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
     setStatus("loading");
+    setOffline(false);
     const origin = location.status === "granted" ? location.coords : undefined;
     getPlaceDetail(placeRef, origin)
       .then((p) => {
-        if (cancelled) return;
-        setPlace(p);
-        setStatus("ready");
-        storage.addRecent(toRef(p));
-        bumpRecents();
+        if (!cancelled) finishReady(p);
       })
       .catch((err) => {
         if (cancelled) return;
+        // Offline rehber: daha önce görüntülendiyse cihazdan aç
+        const cachedPlace = storage.getOfflinePlace(placeRef.placeId) as
+          | Place
+          | null;
+        if (cachedPlace?.placeId === placeRef.placeId) {
+          finishReady(cachedPlace, true);
+          return;
+        }
         setError(err);
         setStatus("error");
       });
@@ -145,6 +179,21 @@ export function PlaceDetailScreen({ placeRef }: { placeRef: PlaceRef }) {
                 {distance && (
                   <span className="rounded-full bg-surface px-3 py-1.5 text-brand">
                     📏 {distance}
+                  </span>
+                )}
+                {openNow === true && (
+                  <span className="rounded-full bg-emerald-100 px-3 py-1.5 text-emerald-700">
+                    ✅ Şu an açık
+                  </span>
+                )}
+                {openNow === false && (
+                  <span className="rounded-full bg-red-100 px-3 py-1.5 text-red-700">
+                    ❌ Şu an kapalı
+                  </span>
+                )}
+                {offline && (
+                  <span className="rounded-full bg-amber-100 px-3 py-1.5 text-amber-800">
+                    📴 Çevrimdışı — kayıtlı bilgiler
                   </span>
                 )}
               </div>
