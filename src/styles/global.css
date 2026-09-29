@@ -105,3 +105,13 @@
   background: var(--color-accent) !important;
   transform: rotate(-45deg) scale(1.2);
 }
+
+.discover-background {
+  min-height: 100%;
+  background-color: #fff7ef;
+  background-image:
+    radial-gradient(ellipse at 100% 0%, rgba(251, 191, 36, 0.25), transparent 34%),
+    radial-gradient(ellipse at 0% 22%, rgba(251, 113, 133, 0.15), transparent 38%),
+    radial-gradient(ellipse at 100% 72%, rgba(124, 58, 237, 0.1), transparent 38%),
+    linear-gradient(160deg, #fff8e8 0%, #fff3ee 38%, #fbf2f7 72%, #fff8f1 100%);
+}

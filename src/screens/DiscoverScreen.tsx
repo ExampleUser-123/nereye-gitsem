@@ -103,9 +103,9 @@ export function DiscoverScreen() {
   ]);
 
   return (
-    <div className="pb-24">
+    <div className="discover-background pb-24">
       {/* Üst bölüm */}
-      <header className="safe-top bg-gradient-to-b from-brand-fog to-bg px-4 pb-4 pt-3">
+      <header className="safe-top px-4 pb-4 pt-3">
         <p className="text-2xl font-extrabold leading-tight text-ink">
           Bugün nereye gitmek istersin?
         </p>
