@@ -23,8 +23,8 @@ export function ProfileScreen() {
   void recentsVersion;
 
   return (
-    <div className="pb-24">
-      <header className="safe-top bg-gradient-to-b from-brand-fog to-bg px-4 pb-5 pt-4">
+    <div className="sunset-background pb-24">
+      <header className="safe-top bg-gradient-to-b from-white/50 to-transparent px-4 pb-5 pt-4">
         <div className="flex items-center gap-3">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand text-2xl font-black text-white">
             {profile.name.charAt(0).toLocaleUpperCase("tr-TR")}
@@ -175,7 +175,7 @@ export function ProfileScreen() {
             <SettingRow
               icon="📱"
               label="Uygulama"
-              value="NEREYE GİTSEM? v1.2"
+              value="NEREYE GİTSEM? v1.3.2"
             />
             <SettingRow
               icon="🗺️"

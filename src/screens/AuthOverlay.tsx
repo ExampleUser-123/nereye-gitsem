@@ -52,9 +52,9 @@ export function AuthOverlay() {
     mode === "login" ? "Hoş geldin" : mode === "register" ? "Hesap oluştur" : "Şifreni sıfırla";
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col bg-bg">
+    <div className="fixed inset-0 z-40 flex flex-col sunset-background">
       {/* Header */}
-      <div className="safe-top flex items-center justify-between bg-gradient-to-b from-brand-fog to-bg px-4 pb-4 pt-4">
+      <div className="safe-top flex items-center justify-between bg-gradient-to-b from-white/50 to-transparent px-4 pb-4 pt-4">
         <button
           onClick={back}
           className="rounded-full bg-surface px-3 py-1.5 text-sm font-bold text-ink shadow-sm active:scale-95"

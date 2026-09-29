@@ -101,7 +101,7 @@ export function PlaceDetailScreen({ placeRef }: { placeRef: PlaceRef }) {
   const cat = getCategory(place?.categoryId ?? "attraction");
 
   return (
-    <div className="fixed inset-0 z-[1000] flex flex-col bg-bg">
+    <div className="fixed inset-0 z-[1000] flex flex-col sunset-background">
       <div className="flex-1 overflow-y-auto pb-20">
         {/* Başlık görseli */}
         <div className="relative h-56 w-full">

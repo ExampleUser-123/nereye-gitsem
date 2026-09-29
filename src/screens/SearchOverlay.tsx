@@ -64,7 +64,7 @@ export function SearchOverlay() {
   }, [query]);
 
   return (
-    <div className="fixed inset-0 z-[1000] flex flex-col bg-bg">
+    <div className="fixed inset-0 z-[1000] flex flex-col sunset-background">
       <div className="safe-top flex items-center gap-2 border-b border-line bg-surface px-3 pb-3 pt-3">
         <button
           onClick={nav.back}

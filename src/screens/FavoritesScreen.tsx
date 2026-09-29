@@ -12,8 +12,8 @@ export function FavoritesScreen() {
   const { favorites, toggleFavorite } = useAppState();
 
   return (
-    <div className="pb-24">
-      <header className="safe-top bg-gradient-to-b from-brand-fog to-bg px-4 pb-4 pt-3">
+    <div className="sunset-background pb-24">
+      <header className="safe-top bg-gradient-to-b from-white/50 to-transparent px-4 pb-4 pt-3">
         <p className="text-2xl font-extrabold text-ink">Favorilerim</p>
         <p className="mt-1 text-sm text-muted">
           {favorites.length > 0

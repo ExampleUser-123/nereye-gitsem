@@ -70,7 +70,7 @@ export function MapScreen() {
   };
 
   return (
-    <div className="relative h-screen w-full">
+    <div className="sunset-background relative h-screen w-full">
       <Suspense
         fallback={
           <div className="flex h-full items-center justify-center text-sm text-muted">

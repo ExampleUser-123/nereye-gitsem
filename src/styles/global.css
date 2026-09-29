@@ -12,7 +12,7 @@
   --color-ink-soft: #334155;
   --color-muted: #64748b;
   --color-line: #e2e8f0;
-  --color-bg: #f4f6f8;
+  --color-bg: #fff1e8;
   --color-surface: #ffffff;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
@@ -70,7 +70,7 @@
    marker tıklanabilirliği bozulmasın diye sadece konteyner düzeyinde
    stacking context oluşturulur. */
 .leaflet-container {
-  z-index: 0;
+  background: transparent;
   font-family: var(--font-sans);
 }
 
@@ -106,12 +106,61 @@
   transform: rotate(-45deg) scale(1.2);
 }
 
-.discover-background {
+.app-background,
+.sunset-background {
   min-height: 100%;
-  background-color: #fff7ef;
+  background-color: #fff1e8;
   background-image:
-    radial-gradient(ellipse at 100% 0%, rgba(251, 191, 36, 0.25), transparent 34%),
-    radial-gradient(ellipse at 0% 22%, rgba(251, 113, 133, 0.15), transparent 38%),
-    radial-gradient(ellipse at 100% 72%, rgba(124, 58, 237, 0.1), transparent 38%),
-    linear-gradient(160deg, #fff8e8 0%, #fff3ee 38%, #fbf2f7 72%, #fff8f1 100%);
+    radial-gradient(ellipse at 100% 0%, rgba(251, 191, 36, 0.32), transparent 36%),
+    radial-gradient(ellipse at 0% 32%, rgba(251, 113, 133, 0.22), transparent 42%),
+    radial-gradient(ellipse at 100% 82%, rgba(124, 58, 237, 0.16), transparent 42%),
+    linear-gradient(160deg, #fff2c7 0%, #ffe8dc 38%, #f8e1ed 72%, #eee3ff 100%);
+  background-attachment: fixed;
+}
+
+.startup-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: env(safe-area-inset-top) 24px env(safe-area-inset-bottom);
+  background: linear-gradient(180deg, #fbbf24 0%, #fb7185 52%, #7c3aed 100%);
+  color: #fff;
+  opacity: 1;
+  transition: opacity 450ms ease;
+}
+
+.startup-splash.is-exiting {
+  opacity: 0;
+}
+
+.startup-splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transform: translateY(-2vh);
+}
+
+.startup-splash-icon {
+  width: 136px;
+  height: 136px;
+  border-radius: 34px;
+  box-shadow: 0 16px 40px rgba(79, 30, 137, 0.24);
+}
+
+.startup-splash-title {
+  margin: 26px 0 8px;
+  font-size: clamp(22px, 6vw, 28px);
+  font-weight: 850;
+  letter-spacing: 0.035em;
+}
+
+.startup-splash-tagline {
+  max-width: 260px;
+  font-size: 14px;
+  line-height: 1.5;
+  opacity: 0.92;
 }

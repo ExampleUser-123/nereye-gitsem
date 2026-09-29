@@ -103,7 +103,7 @@ export function DiscoverScreen() {
   ]);
 
   return (
-    <div className="discover-background pb-24">
+    <div className="sunset-background pb-24">
       {/* Üst bölüm */}
       <header className="safe-top px-4 pb-4 pt-3">
         <p className="text-2xl font-extrabold leading-tight text-ink">

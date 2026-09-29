@@ -2,7 +2,9 @@
  * Uygulama kabuğu: sekmeler + overlay yığını.
  */
 
+import { useState } from "react";
 import { NavigationProvider, useNavigation } from "./app/navigation";
+import { StartupSplash } from "./components/StartupSplash";
 import { AppStateProvider } from "./app/state";
 import { BottomNav } from "./components/BottomNav";
 import { DiscoverScreen } from "./screens/DiscoverScreen";
@@ -40,13 +42,18 @@ function ScreenRouter() {
 }
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
   return (
-    <AppStateProvider>
-      <NavigationProvider>
-        <div className="mx-auto h-full max-w-lg bg-bg">
-          <ScreenRouter />
-        </div>
-      </NavigationProvider>
-    </AppStateProvider>
+    <>
+      <AppStateProvider>
+        <NavigationProvider>
+          <div className="app-background mx-auto h-full max-w-lg">
+            <ScreenRouter />
+          </div>
+        </NavigationProvider>
+      </AppStateProvider>
+      {showSplash && <StartupSplash onComplete={() => setShowSplash(false)} />}
+    </>
   );
 }

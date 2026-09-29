@@ -114,7 +114,7 @@ export function AIScreen() {
   };
 
   return (
-    <div className="flex h-screen flex-col pb-20">
+    <div className="sunset-background flex h-screen flex-col pb-20">
       <header className="safe-top border-b border-line bg-surface px-4 py-3">
         <p className="text-lg font-extrabold text-ink">🤖 AI Keşif Asistanı</p>
         <p className="text-xs text-muted">
